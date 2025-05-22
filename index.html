@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CRYPTO Narxlari</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap');
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      font-family: 'Poppins', sans-serif;
+      color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    h1 {
+      font-size: 4.5rem;
+      font-weight: 700;
+      margin-bottom: 40px;
+      letter-spacing: 6px;
+      background: linear-gradient(90deg, #ff416c, #ff4b2b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-transform: uppercase;
+      text-shadow: 0 4px 10px rgba(255, 75, 43, 0.7);
+    }
+    .crypto-container {
+      width: 100%;
+      max-width: 600px;
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 24px;
+      box-shadow: 0 10px 40px rgba(255, 75, 43, 0.4);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      overflow: hidden;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    thead tr {
+      background: linear-gradient(90deg, #ff416c, #ff4b2b);
+    }
+    thead th {
+      padding: 24px;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+    tbody tr {
+      transition: background 0.25s ease;
+      cursor: pointer;
+    }
+    tbody tr:hover {
+      background: rgba(255, 75, 43, 0.15);
+    }
+    tbody td {
+      padding: 20px 24px;
+      font-size: 1.8rem;
+      vertical-align: middle;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #f0f0f0;
+    }
+    tbody td.price {
+      font-weight: 800;
+      color: #ffbb00;
+      text-shadow: 0 0 6px #ffbb00;
+      font-size: 2rem;
+    }
+    tbody td img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #fff;
+      padding: 5px;
+      box-shadow: 0 6px 16px rgba(255, 75, 43, 0.6);
+      margin-right: 20px;
+    }
+    @media (max-width: 700px) {
+      h1 {
+        font-size: 3rem;
+        margin-bottom: 30px;
+      }
+      thead th {
+        font-size: 1.8rem;
+        padding: 16px;
+      }
+      tbody td {
+        font-size: 1.3rem;
+        padding: 14px 16px;
+      }
+      tbody td img {
+        width: 36px;
+        height: 36px;
+        margin-right: 14px;
+        padding: 3px;
+      }
+      tbody td.price {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<h1>CRYPTO</h1>
+
+<div class="crypto-container">
+  <table>
+    <thead>
+      <tr><th>(USD)</th></tr>
+    </thead>
+    <tbody id="crypto-table"></tbody>
+  </table>
+</div>
+
+<script>
+  const coins = [
+    "bitcoin","ethereum","ripple","litecoin","cardano","dogecoin","polkadot",
+    "binancecoin","bitcoin-cash","stellar","chainlink","usd-coin","vechain",
+    "tron","eos","monero","theta-token","tezos","cosmos","neo"
+  ];
+
+  async function fetchPrices() {
+    const ids = coins.join(',');
+    const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd`;
+    const response = await fetch(url);
+    const data = await response.json();
+    const tableBody = document.getElementById('crypto-table');
+    tableBody.innerHTML = '';
+
+    for (const coin of coins) {
+      const price = data[coin]?.usd ?? 'N/A';
+      const imgUrl = `https://assets.trustwalletapp.com/blockchains/ethereum/assets/${getTrustWalletImageId(coin)}/logo.png`;
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>
+          <img src="${imgUrl}" alt="${coin}" onerror="this.src='https://via.placeholder.com/50'">
+          <span>${capitalize(coin)}</span>
+          <span class="price">${price === 'N/A' ? price : '$' + price}</span>
+        </td>
+      `;
+      tableBody.appendChild(row);
+    }
+  }
+
+  function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1).replace(/-/g, ' ');
+  }
+
+  function getTrustWalletImageId(name) {
+    const map = {
+      bitcoin: "0x0000000000000000000000000000000000000000",
+      ethereum: "0x0000000000000000000000000000000000000000",
+      ripple: "0x0000000000000000000000000000000000000000",
+      litecoin: "0x0000000000000000000000000000000000000000",
+      cardano: "0x0000000000000000000000000000000000000000",
+      dogecoin: "0x0000000000000000000000000000000000000000",
+      polkadot: "0x0000000000000000000000000000000000000000",
+      binancecoin: "0x0000000000000000000000000000000000000000",
+      "bitcoin-cash": "0x0000000000000000000000000000000000000000",
+      stellar: "0x0000000000000000000000000000000000000000",
+      chainlink: "0x514910771af9ca656af840dff83e8264ecf986ca",
+      "usd-coin": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      vechain: "0x0000000000000000000000000000000000000000",
+      tron: "0x0000000000000000000000000000000000000000",
+      eos: "0x0000000000000000000000000000000000000000",
+      monero: "0x0000000000000000000000000000000000000000",
+      "theta-token": "0x0000000000000000000000000000000000000000",
+      tezos: "0x0000000000000000000000000000000000000000",
+      cosmos: "0x0000000000000000000000000000000000000000",
+      neo: "0x0000000000000000000000000000000000000000"
+    };
+    return map[name] || "0x0000000000000000000000000000000000000000";
+  }
+
+  fetchPrices();
+  setInterval(fetchPrices, 20000);
+</script>
+
+</body>
+</html>
